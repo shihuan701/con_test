@@ -3,4 +3,8 @@ class Calculator:
         return a + b
 
     def div(self, a, b):
-        return a / b
+        if b==0:
+            return '除数不能为0'
+        else:
+             c = a / b
+             return round(c,2)
