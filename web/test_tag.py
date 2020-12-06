@@ -1,7 +1,7 @@
 import json
 import time
 
-import requests
+import pytest
 
 from web.tag import Tag
 
@@ -10,11 +10,13 @@ class TestTag():
     def setup(self):
         self.tag = Tag()
 
-    def test_tag_list(self):
-        r = self.tag.list()
 
-        tag_name = 'shiyi'+ str(time.time())
-        r = self.tag.edit(id='etILlkCwAArWGCRm9_YgQuAjdD5GGmDA',tag_name=tag_name)
+    @pytest.mark.parametrize('tag_id,tag_name',[
+        ['etILlkCwAArWGCRm9_YgQuAjdD5GGmDA','shiyi']
+    ])
+    def test_tag_list(self,tag_id,tag_name):
+        tag_name = tag_name+ str(time.time())
+        r = self.tag.edit(id=tag_id,tag_name=tag_name)
         assert r.status_code == 200
         assert r.json()['errcode'] == 0
         ## 查询列表判断是否更新成功
