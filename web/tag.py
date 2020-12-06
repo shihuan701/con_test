@@ -14,11 +14,27 @@ class Tag():
         token = r.json()['access_token']
         return token
 
-    def add(self):
-        pass
+    def add(self,group_id,group_name,order,tag_name,tag_order):
+        json = {
+            "group_id": group_id,
+            "group_name": group_name,
+            "order": order,
+            "tag": [{
+                    "name": tag_name,
+                    "order": tag_order
+                }
+            ]
+        }
+        r = requests.post(url='https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag',
+                          params={'access_token': self.token},
+                          json=json)
+        return r
 
-    def delete(self):
-        pass
+    def delete(self,group_id,tag_id):
+        r = requests.post(url='https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag',
+                          params={'access_token': self.token},
+                          json={'group_id': group_id, 'tag_id': tag_id})
+        return r
 
     def edit(self,id,tag_name):
         r = requests.post(url='https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_corp_tag',
