@@ -12,9 +12,9 @@ class TestTag():
 
 
     @pytest.mark.parametrize('tag_id,tag_name',[
-        ['etILlkCwAArWGCRm9_YgQuAjdD5GGmDA','shiyi'],
-        ['etILlkCwAArWGCRm9_YgQuAjdD5GGmDA', '十一'],
-        ['etILlkCwAArWGCRm9_YgQuAjdD5GGmDA', '😊']
+        ['etILlkCwAAFk1Ga_Cd9RKCp6gczg9jlA','shiyi'],
+        ['etILlkCwAAFk1Ga_Cd9RKCp6gczg9jlA', '😊'],
+        ['etILlkCwAAFk1Ga_Cd9RKCp6gczg9jlA', u'十一']
     ])
     def test_tag_edit(self,tag_id,tag_name):
         tag_name = tag_name+ str(time.time())
@@ -24,22 +24,34 @@ class TestTag():
         ## 查询列表判断是否更新成功
         r = self.tag.list()
         tags = [
-                tag for group in r.json()['tag_group'] if group['group_name'] == 'important'
+                tag for group in r.json()['tag_group'] if group['group_name'] == 'show'
                 for tag in group['tag'] if tag['name'] == tag_name
         ]
         assert len(tags) >0
 
-    @pytest.mark.parametrize('group_name,tag_name', [
-        [ 'show',['lisi','zhangsan']],
+    @pytest.mark.parametrize('group_name,tag_name_list', [
+        [ 'show1',[{'name':'lisi'},{'name':'zhangsan'}]],
     ])
-    def test_tag_add(self,group_name,tag_name):
-        r = self.tag.add(group_name,tag_name)
+    def test_tag_add(self,group_name,tag_name_list):
+        r = self.tag.add(group_name,tag_name_list)
         r = self.tag.list()
         tags = [
             tag for group in r.json()['tag_group'] if group['group_name'] == 'show'
-            for tag in group['tag'] if tag['name'] == tag_name[0]
+            for tag in group['tag'] if tag['name'] == tag_name_list[0]['name']
         ]
         assert len(tags) > 0
+
+    @pytest.mark.parametrize('group_name,tag_name_list', [
+        ['show2', [{'name': 'lisi'}, {'name': 'zhangsan'}]],
+    ])
+    def test_add_before_check(self, group_name, tag_name_list):
+        result = self.tag.add_before_check(group_name, tag_name_list)
+        r = self.tag.list()
+        group = [
+            group for group in r.json()['tag_group'] if group['group_name'] == group_name
+        ]
+        assert len(group) > 0
+
 
     def test_tag_list(self):
         r = self.tag.list()
@@ -51,7 +63,7 @@ class TestTag():
         r = self.tag.list()
 
     def test_group_delete(self):
-        group_id = 'etILlkCwAApjzOR5Kw537iJzLPuea1fA'
+        group_id = ['etILlkCwAApjzOR5Kw537iJzLPuea1fA']
         r = self.tag.delete_group(group_id)
         r = self.tag.list()
         json.dumps(r.json(),indent=2)

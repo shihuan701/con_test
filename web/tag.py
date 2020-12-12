@@ -48,3 +48,28 @@ class Tag():
                           params={'access_token': self.token},
                           json= {'tag_id':[]})
         return r
+
+
+    def add_before_check(self,group_name,tag_name_list,**kwargs):
+        r = self.add(group_name,tag_name_list,**kwargs)
+        # 判断group是否存在
+        if r.json()['errcode'] == 40071:
+            group_id = self.find_name_by_id(group_name)
+            if not group_id:
+                return False
+            # 如果group_name 存在，需要删除group
+            self.delete_group(group_id)
+            # 删除完后再添加group
+            self.add(group_name,tag_name_list,**kwargs)
+        #添加完后再次判断是否存在
+        result = self.find_name_by_id(group_name)
+        if not result:
+            print('group_name 没有添加成功')
+        return result
+
+    def find_name_by_id(self,group_name):
+        for group in self.list().json()['tag_group']:
+            if group_name in group['group_name']:
+                return group['group_id']
+        print('group_name 不存在')
+        return ''
