@@ -29,15 +29,33 @@ class TestTag():
         ]
         assert len(tags) >0
 
-    @pytest.mark.parametrize('group_id,group_name,order,tag_name,tag_order', [
-        ['', 'show','','lisi',''],
+    @pytest.mark.parametrize('group_name,tag_name', [
+        [ 'show',['lisi','zhangsan']],
     ])
-    def test_tag_add(self,group_id,group_name,order,tag_name,tag_order):
-        r = self.tag.add(group_id,group_name,order,tag_name,tag_order)
+    def test_tag_add(self,group_name,tag_name):
+        r = self.tag.add(group_name,tag_name)
         r = self.tag.list()
         tags = [
             tag for group in r.json()['tag_group'] if group['group_name'] == 'show'
-            for tag in group['tag'] if tag['name'] == tag_name
+            for tag in group['tag'] if tag['name'] == tag_name[0]
         ]
         assert len(tags) > 0
+
+    def test_tag_list(self):
+        r = self.tag.list()
+        print(json.dumps(r.json(),indent=2))
+
+    def test_tag_delete(self):
+        tag_id = ['etILlkCwAArWGCRm9_YgQuAjdD5GGmDA']
+        r = self.tag.delete_tag(tag_id)
+        r = self.tag.list()
+
+    def test_group_delete(self):
+        group_id = 'etILlkCwAApjzOR5Kw537iJzLPuea1fA'
+        r = self.tag.delete_group(group_id)
+        r = self.tag.list()
+        json.dumps(r.json(),indent=2)
+
+
+
 
