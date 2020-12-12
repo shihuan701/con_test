@@ -73,3 +73,26 @@ class Tag():
                 return group['group_id']
         print('group_name 不存在')
         return ''
+
+    def is_group_id_exit(self,group_id):
+        for group in self.list().json()['tag_group']:
+            if group_id in group['group_id']:
+                return True
+        print('group_id 不存在')
+        return False
+
+    def delete_and_check_group(self,group_ids,group_name,tag_name_list,):
+        deleted_group_id = []
+        r = self.delete_group(group_ids)
+        if r.json()['errcode'] == 40068:
+            for group_id in group_ids:
+                # 如果group_id不存在,则添加一个标签并把group_id 存储起来
+                if not self.is_group_id_exit(group_id):
+                    group_id = self.add_before_check(group_name,tag_name_list).json()['tag_group']['group_id']
+                    deleted_group_id.append(group_id)
+                else:
+                    deleted_group_id.append(group_id)
+            r = self.delete_group(deleted_group_id)
+        print('group_id 不存在')
+        return False
+

@@ -68,6 +68,9 @@ class TestTag():
         r = self.tag.list()
         json.dumps(r.json(),indent=2)
 
+    def test_delete_and_check_group(self):
+        r = self.tag.delete_and_check_group()
+
 
 
 
