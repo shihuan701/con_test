@@ -54,7 +54,7 @@ class Tag():
         r = self.add(group_name,tag_name_list,**kwargs)
         # 判断group是否存在
         if r.json()['errcode'] == 40071:
-            group_id = self.find_name_by_id(group_name)
+            group_id = self.find_id_by_name(group_name)
             if not group_id:
                 return False
             # 如果group_name 存在，需要删除group
@@ -62,12 +62,12 @@ class Tag():
             # 删除完后再添加group
             self.add(group_name,tag_name_list,**kwargs)
         #添加完后再次判断是否存在
-        result = self.find_name_by_id(group_name)
+        result = self.find_id_by_name(group_name)
         if not result:
             print('group_name 没有添加成功')
         return result
 
-    def find_name_by_id(self,group_name):
+    def find_id_by_name(self,group_name):
         for group in self.list().json()['tag_group']:
             if group_name in group['group_name']:
                 return group['group_id']
@@ -78,7 +78,6 @@ class Tag():
         for group in self.list().json()['tag_group']:
             if group_id in group['group_id']:
                 return True
-        print('group_id 不存在')
         return False
 
     def delete_and_check_group(self,group_ids,group_name,tag_name_list,):
@@ -88,11 +87,10 @@ class Tag():
             for group_id in group_ids:
                 # 如果group_id不存在,则添加一个标签并把group_id 存储起来
                 if not self.is_group_id_exit(group_id):
-                    group_id = self.add_before_check(group_name,tag_name_list).json()['tag_group']['group_id']
-                    deleted_group_id.append(group_id)
+                    group_id_tmp = self.add_before_check(group_name,tag_name_list)
+                    deleted_group_id.append(group_id_tmp)
                 else:
                     deleted_group_id.append(group_id)
             r = self.delete_group(deleted_group_id)
-        print('group_id 不存在')
         return False
 

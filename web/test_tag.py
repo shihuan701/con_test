@@ -69,7 +69,7 @@ class TestTag():
         json.dumps(r.json(),indent=2)
 
     def test_delete_and_check_group(self):
-        r = self.tag.delete_and_check_group()
+        r = self.tag.delete_and_check_group('etILlkCwAAOmN0hSIt88WTVHqfdkohqg','show2',[{'name': 'lisi'}, {'name': 'zhangsan'}])
 
 
 
